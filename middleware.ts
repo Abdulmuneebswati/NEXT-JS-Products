@@ -11,6 +11,7 @@ export default async function middleware(req: NextRequest) {
 
   try {
     const { user } = await verifySession();
+
     const myUser = await getUser(user?.id);
 
     if (isProtectedRoute && !myUser?.success) {

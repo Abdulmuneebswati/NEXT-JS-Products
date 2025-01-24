@@ -2,25 +2,21 @@ import 'server-only';
 
 import { cookies } from 'next/headers';
 import { cache } from 'react';
-import { redirect } from 'next/navigation';
 import newRequest from '@/config/axiosInstance';
+// import { redirect } from 'next/navigation';
 
 export const verifySession = async () => {
-  try {
-    const cookieStore = await cookies();
-    const session = cookieStore.get('session')?.value;
-    const userCookie = cookieStore.get('user')?.value;
-    const user = userCookie ? JSON.parse(userCookie) : null;
+  const cookieStore = await cookies();
+  const session = cookieStore.get('session')?.value;
+  
+  const userCookie = cookieStore.get('user')?.value;
+  const user = userCookie ? JSON.parse(userCookie) : null;
 
-    if (!session) {
-      redirect('/auth/login');
-    }
-
-    return { isAuth: true, session, user };
-  } catch (error) {
-    console.error('Error verifying session:', error);
-    return { isAuth: false, session: null, user: null };
+  if (!session && !user?.id) {
+    return { isAuth: false, user: null };
   }
+
+  return { isAuth: true, user };
 };
 
 export async function deleteSession() {

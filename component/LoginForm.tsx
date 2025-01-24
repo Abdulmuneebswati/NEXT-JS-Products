@@ -2,10 +2,11 @@
 
 import { login } from '@/app/actions/auth';
 
-import { useActionState } from 'react';
+import { Key, useActionState } from 'react';
 
 export default function LoginForm() {
   const [state, action, pending] = useActionState(login, undefined);
+  console.log(state);
 
   return (
     <form
@@ -49,7 +50,7 @@ export default function LoginForm() {
           <div>
             <p className='text-red-500 text-sm font-medium'>Password must:</p>
             <ul className='list-disc list-inside'>
-              {state.errors.password.map((error) => (
+              {state.errors.password.map((error: Key | null | undefined) => (
                 <li
                   key={error}
                   className='text-red-500 text-sm'
@@ -58,6 +59,7 @@ export default function LoginForm() {
             </ul>
           </div>
         )}
+        {/* {state.errors?.message && <p>{error?.message ?? ''}</p>} */}
       </div>
       <button
         type='submit'

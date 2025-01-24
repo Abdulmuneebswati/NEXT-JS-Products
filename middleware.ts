@@ -1,30 +1,30 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
+import { getUser, verifySession } from './lib/dal';
 
-const protectedRoutes = ['/dashboard'];
-const publicRoutes = ['/login', '/signup', '/'];
+const protectedRoutes = ['/dashboard', '/'];
+const publicRoutes = ['/login'];
 
 export default async function middleware(req: NextRequest) {
   const path = req.nextUrl.pathname;
   const isProtectedRoute = protectedRoutes.includes(path);
   const isPublicRoute = publicRoutes.includes(path);
+  try {
+    const { user } = await verifySession();
+    const myUser = await getUser(user?.id);
 
-  const cookie = (await cookies()).get('session')?.value;
-  const userId = (await cookies()).get('userId')?.value;
-
-  if (isProtectedRoute && !cookie && !userId) {
-    return NextResponse.redirect(new URL('/login', req.nextUrl));
+    if (!myUser?.success && isProtectedRoute) {
+      return NextResponse.redirect(new URL('auth/login', req.nextUrl));
+    }
+    if (
+      myUser?.success &&
+      isPublicRoute &&
+      !req.nextUrl.pathname.startsWith('/')
+    ) {
+      return NextResponse.redirect(new URL('/', req.nextUrl));
+    }
+  } catch (error) {
+    console.error('Error parsing user cookie:', error);
   }
-
-  if (
-    isPublicRoute &&
-    cookie &&
-    !req.nextUrl.pathname.startsWith('/dashboard') &&
-    userId
-  ) {
-    return NextResponse.redirect(new URL('/dashboard', req.nextUrl));
-  }
-
   return NextResponse.next();
 }
 

@@ -1,5 +1,6 @@
 'use server';
 import { LoginFormSchema, FormState } from '@/app/lib/definitions';
+import { deleteSession } from '@/lib/dal';
 import axios from 'axios';
 import { AxiosError } from 'axios';
 import { cookies } from 'next/headers';
@@ -72,4 +73,9 @@ export async function login(state: FormState, formData: FormData) {
       redirect(redirectPath);
     }
   }
+}
+
+export async function logout() {
+  deleteSession();
+  redirect('/auth/login');
 }

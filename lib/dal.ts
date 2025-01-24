@@ -5,15 +5,29 @@ import { cache } from 'react';
 import { redirect } from 'next/navigation';
 import newRequest from '@/config/axiosInstance';
 
-export const verifySession = cache(async () => {
-  const cookie = (await cookies()).get('session')?.value;
-  const userCookie = (await cookies()).get('user')?.value;
-  const user = userCookie ? JSON.parse(userCookie) : null;
-  if (!cookie) {
-    redirect('/login');
+export const verifySession = async () => {
+  try {
+    const cookieStore = await cookies();
+    const session = cookieStore.get('session')?.value;
+    const userCookie = cookieStore.get('user')?.value;
+    const user = userCookie ? JSON.parse(userCookie) : null;
+
+    if (!session) {
+      redirect('/auth/login');
+    }
+
+    return { isAuth: true, session, user };
+  } catch (error) {
+    console.error('Error verifying session:', error);
+    return { isAuth: false, session: null, user: null };
   }
-  return { isAuth: true, session: cookie, user };
-});
+};
+
+export async function deleteSession() {
+  const cookieStore = await cookies();
+  cookieStore.delete('session');
+  cookieStore.delete('user');
+}
 
 export const getUser = cache(async (userId: number | undefined) => {
   try {

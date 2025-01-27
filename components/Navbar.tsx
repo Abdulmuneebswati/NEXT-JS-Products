@@ -16,7 +16,7 @@ const Navbar = () => {
     <Card className='w-full bg-card py-3 px-4 border-0 flex items-center justify-between gap-6 rounded-2xl mt-5'>
       <ul className='hidden md:flex items-center gap-10 text-card-foreground'>
         <li className='text-primary font-medium'>
-          <a href='#home'>Home</a>
+          <Link href='/'>Home</Link>
         </li>
         <li>
           <a href='#features'>Features</a>

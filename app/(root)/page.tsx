@@ -1,3 +1,4 @@
+import DeleteProduct from '@/components/DeleteProduct';
 import UserButton from '@/components/Products/UserButton';
 import {
   Card,
@@ -7,14 +8,21 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import newRequest from '@/config/axiosInstance';
+import { verifySession } from '@/lib/dal';
 import Link from 'next/link';
 
+export const dynamic = 'force-dynamic';
+const getProducts = async () => {
+  try {
+    const response = await newRequest.get('products/');
+    return response;
+  } catch (error) {
+    console.log(error, '++++++++');
+  }
+};
 export default async function Home() {
-  const { data } = await newRequest.get('http://127.0.0.1:8000/api/products/', {
-    headers: {
-      Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzM3ODEwMzE3LCJpYXQiOjE3Mzc3MjM5MTcsImp0aSI6ImZiNjk4MDhjOTI1ZjQ2ZGI4YjIzY2YxYTNhY2RjOGUxIiwidXNlcl9pZCI6Mn0.i-FSNL4n_viRS1wsK-F0bTE1bzKr52-8UbjbsEpsZwc`, // Replace with your actual token logic
-    },
-  });
+  const { data } = await getProducts();
+  const { user } = await verifySession();
 
   return (
     <div className='p-10'>
@@ -33,6 +41,7 @@ export default async function Home() {
                 name: string;
               };
             }) => {
+              const isOwner = user?.id === product?.owner?.id;
               return (
                 <div
                   key={product.id}
@@ -43,6 +52,9 @@ export default async function Home() {
                     className='w-[30%]'
                   >
                     <Card>
+                      <div className='flex w-full pr-4 pt-4 justify-end'>
+                        {isOwner && <DeleteProduct productId={product.id} />}
+                      </div>
                       <CardHeader>
                         <CardTitle>{product.name}</CardTitle>
                         <CardDescription>{product.description}</CardDescription>

@@ -31,21 +31,21 @@ export async function login(state: FormState, formData: FormData) {
       const cookieStore = await cookies();
       cookieStore.set('session', access, {
         httpOnly: true,
-        secure: true,
+        secure: false,
         expires: expiresAt,
         sameSite: 'lax',
         path: '/',
       });
       cookieStore.set('refresh_session', refresh, {
         httpOnly: true,
-        secure: true,
+        secure: false,
         expires: expiresAt,
         sameSite: 'lax',
         path: '/',
       });
       cookieStore.set('user', JSON.stringify(user), {
         httpOnly: true,
-        secure: true,
+        secure: false,
         expires: expiresAt,
         sameSite: 'lax',
         path: '/',

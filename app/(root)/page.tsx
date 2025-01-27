@@ -11,19 +11,31 @@ import newRequest from '@/config/axiosInstance';
 import { verifySession } from '@/lib/dal';
 import Link from 'next/link';
 
+type Product = {
+  id: number;
+  name: string;
+  description: string;
+  price: string;
+  stock: string;
+  owner: {
+    id: number;
+    name: string;
+  };
+};
+
 export const dynamic = 'force-dynamic';
-const getProducts = async () => {
+const getProducts = async (): Promise<Product[] | undefined> => {
   try {
-    const response = await newRequest.get('products/');
-    return response;
+    const response = await newRequest.get<Product[] | undefined>('products/');
+    return response?.data ?? [];
   } catch (error) {
     console.log(error, '++++++++');
   }
 };
 export default async function Home() {
-  const { data } = await getProducts();
+  const data = await getProducts();
   const { user } = await verifySession();
-  
+
   return (
     <div className='p-10'>
       <h1 className=''>Products</h1>

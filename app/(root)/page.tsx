@@ -23,7 +23,7 @@ const getProducts = async () => {
 export default async function Home() {
   const { data } = await getProducts();
   const { user } = await verifySession();
-
+  
   return (
     <div className='p-10'>
       <h1 className=''>Products</h1>

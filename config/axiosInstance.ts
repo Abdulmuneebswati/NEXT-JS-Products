@@ -2,7 +2,7 @@ import axios from 'axios';
 import { cookies } from 'next/headers';
 
 const newRequest = axios.create({
-  baseURL: 'http://127.0.0.1:8000/api/',
+  baseURL: `${process.env.BACKEND_URL}/api/`,
 });
 
 newRequest.interceptors.request.use(

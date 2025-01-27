@@ -13,7 +13,6 @@ export default async function middleware(req: NextRequest) {
     const { user } = await verifySession();
 
     const myUser = await getUser(user?.id);
-
     if (isProtectedRoute && !myUser?.success) {
       return NextResponse.redirect(new URL('/auth/login', req.nextUrl));
     }
